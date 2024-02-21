@@ -1,3 +1,5 @@
+import json
+
 from pytest_bdd import scenario, given, when, then, parsers, scenarios
 
 
@@ -9,13 +11,15 @@ def test_jar_of_pickles():
     print("Spinning the lid should allow to open the jar of pickles")
     pass
 
+
 # Option #2: If you want to tell pytest to run all the scenarios in a feature file, you can do it this way:
 scenarios("jar_of_pickles.feature")
 
 
 # Option #3: You can also "attach" a regular python test to a scenario. Then you just say which test
 #   you'd like to "attach" using the decorator (same as in option #1), but you don't need the step definitions:
-@scenario('jar_of_pickles.feature', 'Spinning the lid should allow to open the jar of pickles 3')
+@scenario('jar_of_pickles.feature',
+          'Spinning the lid should allow to open the jar of pickles - duplicate with Pytest-like test')
 def test_jar_of_pickles(pickles):
     print("Spinning the lid should allow to open the jar of pickles 3")
     for _ in range(2):
@@ -57,6 +61,13 @@ def step_definition(pickles, active_jar_index):
     return pickles
 
 
+@then("user should be able to take the lids off all the jars", target_fixture="pickles")
+def step_definition(pickles, active_jars):
+    for jar in active_jars:
+        pickles[jar]["closed"] = False
+        return pickles
+
+
 @then(parsers.parse('jar of pickles number {number:d} should be opened'))
 def step_definition(number, pickles):
     assert pickles[number - 1]["closed"] == False
@@ -65,3 +76,18 @@ def step_definition(number, pickles):
 @then(parsers.parse('jar of pickles number {number:d} should be closed'))
 def step_definition(number, pickles):
     assert pickles[number - 1]["closed"] == True
+
+
+@when(parsers.parse('user grabs jars number {jars_list}'), target_fixture="active_jars")
+def step_definition(jars_list, pickles):
+    jars_list = json.loads(jars_list)
+    for jar_number in jars_list:
+        pickles[jar_number-1]["closed"] = False
+    return jars_list
+
+
+@then(parsers.parse('jars {jars_list} should be opened'))
+def step_definition(jars_list, pickles):
+    jars_list = json.loads(jars_list)
+    for jar_number in jars_list:
+        assert pickles[jar_number - 1]["closed"] == False
