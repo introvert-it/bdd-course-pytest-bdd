@@ -9,29 +9,20 @@ pipeline {
             agent {
                  dockerfile {
                     filename 'Dockerfile'
-                    customWorkspace '/var/jenkins_home/workspace/func-tests'
                  }
             }
             steps {
                 echo 'Running tests'
                 sh 'pytest --alluredir allure-results'
-                stash allowEmpty: true, includes: '/var/jenkins_home/workspace/func-tests/allure-results/*', name: 'allure-results'
             }
         }
     }
 
     post {
         always {
-            unstash 'allure-results' //extract results
             script {
-                ws ('/var/jenkins_home/workspace/func-tests/') {
-                    allure ([
-                        includeProperties: false,
-                        jdk: '',
-                        properties: [],
-                        reportBuildPolicy: 'ALWAYS',
-                        results: [[path: './allure-results']]
-                    ])
+                ws (env.WORKSPACE) {
+                    allure results: [[path: './allure-results']]
                 }
             }
         }
