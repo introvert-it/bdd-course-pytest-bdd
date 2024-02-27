@@ -1,0 +1,27 @@
+pipeline {
+    agent {
+        dockerfile true
+    }
+
+    stages {
+        stage('Configure environment') {
+            steps{
+                echo 'Installing dependencies'
+                sh 'sudo apt install pip'
+                sh 'pip install -r requirements.txt'
+            }
+        }
+        stage('Run tests') {
+            steps {
+                echo 'Running tests'
+                sh 'pytest --alluredir allure-results'
+            }
+        }
+        stage('Create report') {
+            steps {
+                echo 'Create report'
+                sh 'allure generate'
+            }
+        }
+    }
+}
