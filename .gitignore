@@ -52,3 +52,5 @@ Thumbs.db
 .pytest_cache
 venv
 env_configuration.json
+allure-report
+allure-results
