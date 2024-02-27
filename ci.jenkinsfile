@@ -1,0 +1,30 @@
+pipeline {
+    agent any
+     tools {
+        allure 'allure'
+    }
+
+    stages {
+        stage('Run tests') {
+            agent {
+                 dockerfile {
+                    filename 'Dockerfile'
+                 }
+            }
+            steps {
+                echo 'Running tests'
+                sh 'pytest --alluredir allure-results'
+            }
+        }
+    }
+
+    post {
+        always {
+            script {
+                ws (env.WORKSPACE) {
+                    allure results: [[path: './allure-results']]
+                }
+            }
+        }
+    }
+}
