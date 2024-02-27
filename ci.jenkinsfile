@@ -1,26 +1,38 @@
 pipeline {
-    agent {
-        dockerfile true
+    agent any
+     tools {
+        allure 'allure'
     }
 
     stages {
-        stage('Configure environment') {
-            steps{
-                echo 'Installing dependencies'
-                sh 'sudo apt install pip'
-                sh 'pip install -r requirements.txt'
-            }
-        }
         stage('Run tests') {
+            agent {
+                 dockerfile {
+                    filename 'Dockerfile'
+                    customWorkspace '/var/jenkins_home/workspace/func-tests'
+                 }
+            }
             steps {
                 echo 'Running tests'
                 sh 'pytest --alluredir allure-results'
+                stash allowEmpty: true, includes: '/var/jenkins_home/workspace/func-tests/allure-results/*', name: 'allure-results'
             }
         }
-        stage('Create report') {
-            steps {
-                echo 'Create report'
-                sh 'allure generate'
+    }
+
+    post {
+        always {
+            unstash 'allure-results' //extract results
+            script {
+                ws ('/var/jenkins_home/workspace/func-tests/') {
+                    allure ([
+                        includeProperties: false,
+                        jdk: '',
+                        properties: [],
+                        reportBuildPolicy: 'ALWAYS',
+                        results: [[path: './allure-results']]
+                    ])
+                }
             }
         }
     }
