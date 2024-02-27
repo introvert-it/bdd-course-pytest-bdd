@@ -1,3 +1,4 @@
+#noinspection CucumberUndefinedStep
 Feature: Jar of pickles
 
   Scenario: Spinning the lid should allow to open the jar of pickles

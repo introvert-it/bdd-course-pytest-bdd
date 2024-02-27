@@ -6,9 +6,9 @@ from pytest_bdd import scenario, given, when, then, parsers, scenarios
 # Each scenario that you have in feature files have to be defined in Python:
 # Option #1: The scenario below will tell pytest to run only "Spinning the lid should allow to open the jar of
 #   pickles" scenario. It will ignore others, as it doesn't know they exist:
-@scenario('jar_of_pickles.feature', 'Spinning the lid should allow to open the jar of pickles')
+@scenario('jar_of_pickles.feature',
+          'Spinning the lid should allow to open the jar of pickles')
 def test_jar_of_pickles():
-    print("Spinning the lid should allow to open the jar of pickles")
     pass
 
 
