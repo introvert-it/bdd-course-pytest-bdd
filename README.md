@@ -22,8 +22,7 @@
 
 ### How to create allure results
 
-1. Install allure standalone using [these]([allure-report](allure-report)
-[allure-results](allure-results)) steps. Please, note that you need Java
+1. Install allure standalone using [these](https://allurereport.org/docs/gettingstarted-installation/) steps. Please, note that you need Java
 installed before you try installing allure standalone.
 2. Open terminal.
 3. Run `pip install requirements.txt` to make sure that `allure-pytest-bdd`
